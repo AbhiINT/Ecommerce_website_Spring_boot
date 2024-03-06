@@ -44,8 +44,7 @@ public class Product {
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @OneToMany
     private List<CartItem> cartItems;
 
 }

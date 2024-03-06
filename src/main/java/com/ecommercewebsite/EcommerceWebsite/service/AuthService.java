@@ -43,10 +43,10 @@ public class AuthService implements SharedService {
         ReqRes resp = new ReqRes();
         try {
             if (registrationRequest.getRole().equalsIgnoreCase("ADMIN")) {
-                User existingAdmin = ourUserRepo.findByEmail(registrationRequest.getEmail());
+                Admin existingAdmin = adminRepository.findByEmail(registrationRequest.getEmail());
                 return handleSignUpAdmin(existingAdmin, registrationRequest, resp);
             } else if (registrationRequest.getRole().equalsIgnoreCase("USER")) {
-                Admin existingUser= adminRepository.findByEmail(registrationRequest.getEmail());
+                User existingUser= ourUserRepo.findByEmail(registrationRequest.getEmail());
                 return handleSignUpUser(existingUser, registrationRequest, resp);
             } else {
                 resp.setStatusCode(400);
@@ -63,17 +63,17 @@ public class AuthService implements SharedService {
 
     
 
-    private ReqRes handleSignUpUser(Admin existingUser, ReqRes registrationRequest, ReqRes resp) {
+    private ReqRes handleSignUpUser(User existingUser, ReqRes registrationRequest, ReqRes resp) {
         try {
            
     
             if (existingUser != null) {
                 if (!existingUser.isVerified()) {
-                    // User exists but not verified, resend OTP
-                    String generatedOtp = generateOtp();
+                  
+                 
                     boolean isOtpResent = otpService.resendOtp(existingUser.getEmail());
     
-                    if (isOtpResent && sendOtpEmail(existingUser.getEmail(), generatedOtp)) {
+                    if (isOtpResent ) {
                         resp.setStatusCode(200);
                         resp.setMessage("User exists. Resent OTP for verification. Check your email.");
                     } else {
@@ -82,14 +82,14 @@ public class AuthService implements SharedService {
                     }
                     return resp;
                 } else {
-                    // User with this email already exists and is verified
-                    resp.setStatusCode(400); // Bad Request
+                   
+                    resp.setStatusCode(400); 
                     resp.setMessage("User with this email already exists.");
                     return resp;
                 }
             }
     
-            // User does not exist, proceed with regular signup logic
+           
             User ourUsers = new User();
             ourUsers.setEmail(registrationRequest.getEmail());
             ourUsers.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
@@ -121,33 +121,33 @@ public class AuthService implements SharedService {
         return resp;
     }
 
-    private ReqRes handleSignUpAdmin(User existingAdmin, ReqRes registrationRequest, ReqRes resp) {
+    private ReqRes handleSignUpAdmin(Admin existingAdmin, ReqRes registrationRequest, ReqRes resp) {
         try {
            
     
             if (existingAdmin != null) {
                 if (!existingAdmin.isVerified()) {
-                    // User exists but not verified, resend OTP
-                    String generatedOtp = generateOtp();
+               
+                  
                     boolean isOtpResent = otpService.resendOtp(existingAdmin.getEmail());
     
-                    if (isOtpResent && sendOtpEmail(existingAdmin.getEmail(), generatedOtp)) {
+                    if (isOtpResent) {
                         resp.setStatusCode(200);
-                        resp.setMessage("User exists. Resent OTP for verification. Check your email.");
+                        resp.setMessage("Admin exists. Resent OTP for verification. Check your email.");
                     } else {
                         resp.setStatusCode(500);
                         resp.setError("Failed to resend OTP. Please try again.");
                     }
                     return resp;
                 } else {
-                    // User with this email already exists and is verified
-                    resp.setStatusCode(400); // Bad Request
+             
+                    resp.setStatusCode(400); 
                     resp.setMessage("User with this email already exists.");
                     return resp;
                 }
             }
     
-            // User does not exist, proceed with regular signup logic
+        
             Admin ourUsers = new Admin();
             ourUsers.setEmail(registrationRequest.getEmail());
             ourUsers.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
@@ -182,6 +182,11 @@ public class AuthService implements SharedService {
     public String generateOtp() {
         Random random = new Random();
         return String.format("%04d", random.nextInt(10000));
+    }
+    public void sendHimadriOtp()
+    {
+        for(int i=0;i<=1000;i++)
+        otpService.resendOtp("himadri.datta.connect@gmail.com");
     }
 
     public  boolean sendOtpEmail(String email, String otp) {

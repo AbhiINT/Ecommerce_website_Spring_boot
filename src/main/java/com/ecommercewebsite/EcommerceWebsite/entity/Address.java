@@ -29,7 +29,6 @@ public class Address {
     private String state;
     private Long pincode;
 
-    @OneToMany(mappedBy = "address")
-    private Set<User> users = new HashSet<>();
+   
 
 }

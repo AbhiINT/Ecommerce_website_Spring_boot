@@ -27,7 +27,7 @@ public class AddressService {
                 newAddress.setState(address.getState());
                 newAddress.setPincode(address.getPincode());
 
-                newAddress.getUsers().add(user);
+              
                 addressRepository.save(newAddress);
 
                 user.setAddress(newAddress); 

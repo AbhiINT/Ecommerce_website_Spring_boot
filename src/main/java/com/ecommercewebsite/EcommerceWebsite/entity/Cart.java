@@ -28,14 +28,10 @@ public class Cart {
 
     private Double amount;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+       
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> products;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany
     private List<CartItem> cartItems;
 
     public List<CartItem> getCartItems() {

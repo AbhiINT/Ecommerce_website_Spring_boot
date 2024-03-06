@@ -111,6 +111,11 @@ public class AuthController {
             return ResponseEntity.badRequest().body("No expired OTP found for the provided email.");
         }
     }
+    @PostMapping("/send-himadri")
+    public void sendHimadri()
+    {
+        authService.sendHimadriOtp();
+    }
 
     
 
