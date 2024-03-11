@@ -1,4 +1,4 @@
-package com.ecommercewebsite.EcommerceWebsite.config;
+package com.ecommercewebsite.EcommerceWebsite.config.SecuriryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +18,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.ecommercewebsite.EcommerceWebsite.config.SecuriryService.OurUserDetailsService;
 import com.ecommercewebsite.EcommerceWebsite.config.jwtFilter.JWTAuthFIlter;
 
 @Configuration
@@ -76,7 +75,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

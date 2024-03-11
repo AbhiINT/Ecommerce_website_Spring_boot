@@ -1,4 +1,4 @@
-package com.ecommercewebsite.EcommerceWebsite.config.SecuriryService;
+package com.ecommercewebsite.EcommerceWebsite.util;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

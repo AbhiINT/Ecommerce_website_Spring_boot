@@ -2,7 +2,7 @@ package com.ecommercewebsite.EcommerceWebsite.DTO;
 
 import java.util.List;
 
-import com.ecommercewebsite.EcommerceWebsite.entity.Admin;
+import com.ecommercewebsite.EcommerceWebsite.admin.entity.Admin;
 import com.ecommercewebsite.EcommerceWebsite.entity.Product;
 import com.ecommercewebsite.EcommerceWebsite.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

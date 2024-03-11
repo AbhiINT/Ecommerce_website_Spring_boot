@@ -1,4 +1,4 @@
-package com.ecommercewebsite.EcommerceWebsite.service;
+package com.ecommercewebsite.EcommerceWebsite.admin.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,6 +1,5 @@
-package com.ecommercewebsite.EcommerceWebsite.controller;
+package com.ecommercewebsite.EcommerceWebsite.auth.userAuth.userAuthController;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,60 +11,37 @@ import com.ecommercewebsite.EcommerceWebsite.DTO.ChangePasswordDTO;
 import com.ecommercewebsite.EcommerceWebsite.DTO.OtpVerificationRequest;
 import com.ecommercewebsite.EcommerceWebsite.DTO.ReqRes;
 import com.ecommercewebsite.EcommerceWebsite.admin.entity.Admin;
-import com.ecommercewebsite.EcommerceWebsite.admin.repository.AdminRepository;
-import com.ecommercewebsite.EcommerceWebsite.admin.service.AdminService;
+import com.ecommercewebsite.EcommerceWebsite.auth.userAuth.userAuthService.UserAuthService;
 import com.ecommercewebsite.EcommerceWebsite.entity.User;
 import com.ecommercewebsite.EcommerceWebsite.remote.service.OtpService;
 import com.ecommercewebsite.EcommerceWebsite.repository.UserRepository;
-import com.ecommercewebsite.EcommerceWebsite.service.AuthServicedemo;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/auth")
-public class AuthController {
-
-    @Autowired
-    private AuthServicedemo authService;
-    @Autowired 
-    private OtpService otpService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private AdminService adminService;
-
-    @Autowired
-    private AdminRepository adminRepository;
-
+@RequiredArgsConstructor
+@RequestMapping("/auth/user")
+public class UserAuthController {
+    private final OtpService otpService;
+    private final UserAuthService authService;
+    private final UserRepository userRepository;
+   
     @PostMapping("/signup")
-    public ResponseEntity<ReqRes> signUp(@RequestBody ReqRes signUpRequest){
-        System.err.println(signUpRequest.toString());
-        return ResponseEntity.ok(authService.signUp(signUpRequest));
+    public ResponseEntity<ReqRes> signUp(@RequestBody ReqRes registrationRequest){
+      
+        return ResponseEntity.ok(authService.handleSignUpUser(registrationRequest));
     }
+
     @PostMapping("/signin")
     public ResponseEntity<ReqRes> signIn(@RequestBody ReqRes signInRequest){
 
-        User user=userRepository.findByEmail(signInRequest.getEmail());
-        Admin admin=adminRepository.findByEmail(signInRequest.getEmail());
-
-        if(user!=null){
-        if(userRepository.findByEmail(signInRequest.getEmail()).isVerified())
+       
+       
              return ResponseEntity.ok(authService.signInUser(signInRequest));
      
             
         }
-        else if(admin!=null)
-        {
-            if(adminRepository.findByEmail(signInRequest.getEmail()).isVerified())
-             return ResponseEntity.ok(authService.signInAdmin(signInRequest));
-        }
-            ReqRes res=new ReqRes();
-            res.setStatusCode(401);
-            res.setMessage("User is Not Verifird ! Please Verify to ACtivate account and then try login.");
-            return ResponseEntity.ok(res);
-        
        
-    }
     @PostMapping("/refresh")
     public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes refreshTokenRequest){
         return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest));
@@ -79,17 +55,14 @@ public class AuthController {
     
         switch (otpStatus) {
             case "valid":
-                Admin admin=adminRepository.findByEmail(email);
-                User user = userRepository.findByEmail(email);
+                User user=userRepository.findByEmail(email);
+               
                 if(user!=null)
                 {
                     user.setVerified(true);
                     userRepository.save(user);
                 }
-                else {
-                    admin.setVerified(true);
-                    adminRepository.save(admin);
-                }
+               
                 return "OTP is valid. User is verified!";
             case "invalid":
                 return "Invalid OTP. User verification failed.";
@@ -119,11 +92,8 @@ public class AuthController {
 
     @PostMapping("/chnage-password")
     public ResponseEntity<ReqRes> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
-        ReqRes response = adminService.changePassword(changePasswordDTO);
+        ReqRes response = authService.changePassword(changePasswordDTO);
         return ResponseEntity.ok(response);
         
     }
-    
-
-   
 }

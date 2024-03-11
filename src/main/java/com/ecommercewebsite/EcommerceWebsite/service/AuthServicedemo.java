@@ -1,6 +1,6 @@
 package com.ecommercewebsite.EcommerceWebsite.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,15 +8,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ecommercewebsite.EcommerceWebsite.DTO.ChangePasswordDTO;
+
 import com.ecommercewebsite.EcommerceWebsite.DTO.ReqRes;
-import com.ecommercewebsite.EcommerceWebsite.config.SecuriryService.JWTUtils;
-import com.ecommercewebsite.EcommerceWebsite.config.SecuriryService.OtpService;
-import com.ecommercewebsite.EcommerceWebsite.entity.Admin;
+import com.ecommercewebsite.EcommerceWebsite.admin.entity.Admin;
+import com.ecommercewebsite.EcommerceWebsite.admin.repository.AdminRepository;
 import com.ecommercewebsite.EcommerceWebsite.entity.User;
-import com.ecommercewebsite.EcommerceWebsite.repository.AdminRepository;
+import com.ecommercewebsite.EcommerceWebsite.remote.service.OtpService;
 import com.ecommercewebsite.EcommerceWebsite.repository.UserRepository;
-import com.ecommercewebsite.EcommerceWebsite.service.sharedService.SharedService;
+
+import com.ecommercewebsite.EcommerceWebsite.util.JWTUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +25,7 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService implements SharedService {
+public class AuthServicedemo  {
 
     private final UserRepository ourUserRepo;
     private final JWTUtils jwtUtils;

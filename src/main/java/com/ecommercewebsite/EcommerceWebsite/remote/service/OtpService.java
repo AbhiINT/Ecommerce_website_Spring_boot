@@ -1,4 +1,4 @@
-package com.ecommercewebsite.EcommerceWebsite.config.SecuriryService;
+package com.ecommercewebsite.EcommerceWebsite.remote.service;
 
 
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.ecommercewebsite.EcommerceWebsite.entity.OtpEntity;
 import com.ecommercewebsite.EcommerceWebsite.repository.OtpRepository;
 
-import com.ecommercewebsite.EcommerceWebsite.service.sharedService.SharedService;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +20,7 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class OtpService implements SharedService {
+public class OtpService  {
 
 
     private final  OtpRepository otpRepository;
@@ -87,13 +87,13 @@ public class OtpService implements SharedService {
     }
     
 
-    private String generateOtp() {
+    public String generateOtp() {
         Random random = new Random();
         return String.format("%04d", random.nextInt(10000));
     }
 
-
-    @Override
+    
+ 
     public boolean sendOtpEmail(String email, String otp) {
        try {
             SimpleMailMessage message = new SimpleMailMessage();

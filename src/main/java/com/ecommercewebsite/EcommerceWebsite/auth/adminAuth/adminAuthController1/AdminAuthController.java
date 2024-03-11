@@ -1,7 +1,8 @@
-package com.ecommercewebsite.EcommerceWebsite.controller;
+package com.ecommercewebsite.EcommerceWebsite.auth.adminAuth.adminAuthController1;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,59 +14,39 @@ import com.ecommercewebsite.EcommerceWebsite.DTO.OtpVerificationRequest;
 import com.ecommercewebsite.EcommerceWebsite.DTO.ReqRes;
 import com.ecommercewebsite.EcommerceWebsite.admin.entity.Admin;
 import com.ecommercewebsite.EcommerceWebsite.admin.repository.AdminRepository;
-import com.ecommercewebsite.EcommerceWebsite.admin.service.AdminService;
-import com.ecommercewebsite.EcommerceWebsite.entity.User;
+import com.ecommercewebsite.EcommerceWebsite.auth.adminAuth.adminAuthService.AdminAuthService;
+
 import com.ecommercewebsite.EcommerceWebsite.remote.service.OtpService;
-import com.ecommercewebsite.EcommerceWebsite.repository.UserRepository;
-import com.ecommercewebsite.EcommerceWebsite.service.AuthServicedemo;
 
+import lombok.RequiredArgsConstructor;
 @RestController
-@RequestMapping("/auth")
-public class AuthController {
+@RequestMapping("/auth/admin")
+@RequiredArgsConstructor
+public class AdminAuthController {
 
-    @Autowired
-    private AuthServicedemo authService;
-    @Autowired 
-    private OtpService otpService;
+    private final AdminRepository adminRepository;
+    
+    private final OtpService otpService;
+    private final AdminAuthService authService;
+    
 
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private AdminService adminService;
-
-    @Autowired
-    private AdminRepository adminRepository;
-
-    @PostMapping("/signup")
-    public ResponseEntity<ReqRes> signUp(@RequestBody ReqRes signUpRequest){
-        System.err.println(signUpRequest.toString());
-        return ResponseEntity.ok(authService.signUp(signUpRequest));
+     @PostMapping("/signup")
+    public ResponseEntity<ReqRes> signUp(@RequestBody ReqRes registrationRequest){
+      
+        return ResponseEntity.ok(authService.handleSignUpAdmin(registrationRequest));
     }
+
     @PostMapping("/signin")
     public ResponseEntity<ReqRes> signIn(@RequestBody ReqRes signInRequest){
 
-        User user=userRepository.findByEmail(signInRequest.getEmail());
-        Admin admin=adminRepository.findByEmail(signInRequest.getEmail());
-
-        if(user!=null){
-        if(userRepository.findByEmail(signInRequest.getEmail()).isVerified())
-             return ResponseEntity.ok(authService.signInUser(signInRequest));
+       
+       
+             return ResponseEntity.ok(authService.signInAdmin(signInRequest));
      
             
         }
-        else if(admin!=null)
-        {
-            if(adminRepository.findByEmail(signInRequest.getEmail()).isVerified())
-             return ResponseEntity.ok(authService.signInAdmin(signInRequest));
-        }
-            ReqRes res=new ReqRes();
-            res.setStatusCode(401);
-            res.setMessage("User is Not Verifird ! Please Verify to ACtivate account and then try login.");
-            return ResponseEntity.ok(res);
-        
        
-    }
     @PostMapping("/refresh")
     public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes refreshTokenRequest){
         return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest));
@@ -80,11 +61,11 @@ public class AuthController {
         switch (otpStatus) {
             case "valid":
                 Admin admin=adminRepository.findByEmail(email);
-                User user = userRepository.findByEmail(email);
-                if(user!=null)
+               
+                if(admin!=null)
                 {
-                    user.setVerified(true);
-                    userRepository.save(user);
+                    admin.setVerified(true);
+                    adminRepository.save(admin);
                 }
                 else {
                     admin.setVerified(true);
@@ -119,11 +100,9 @@ public class AuthController {
 
     @PostMapping("/chnage-password")
     public ResponseEntity<ReqRes> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
-        ReqRes response = adminService.changePassword(changePasswordDTO);
+        ReqRes response = authService.changePassword(changePasswordDTO);
         return ResponseEntity.ok(response);
         
     }
-    
-
    
 }
