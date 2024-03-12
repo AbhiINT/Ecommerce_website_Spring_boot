@@ -1,10 +1,10 @@
-package com.ecommercewebsite.EcommerceWebsite.repository;
+package com.ecommercewebsite.EcommerceWebsite.model.user.repository;
 
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.ecommercewebsite.EcommerceWebsite.entity.User;
+import com.ecommercewebsite.EcommerceWebsite.model.user.entity.User;
 
 public interface UserRepository extends JpaRepository<User , Long> {
 

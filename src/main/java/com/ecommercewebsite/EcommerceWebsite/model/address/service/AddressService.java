@@ -1,11 +1,11 @@
-package com.ecommercewebsite.EcommerceWebsite.service;
+package com.ecommercewebsite.EcommerceWebsite.model.address.service;
 
 import org.springframework.stereotype.Service;
 
-import com.ecommercewebsite.EcommerceWebsite.entity.Address;
-import com.ecommercewebsite.EcommerceWebsite.entity.User;
-import com.ecommercewebsite.EcommerceWebsite.repository.AddressRepository;
-import com.ecommercewebsite.EcommerceWebsite.repository.UserRepository;
+import com.ecommercewebsite.EcommerceWebsite.model.address.entity.Address;
+import com.ecommercewebsite.EcommerceWebsite.model.address.repository.AddressRepository;
+import com.ecommercewebsite.EcommerceWebsite.model.user.entity.User;
+import com.ecommercewebsite.EcommerceWebsite.model.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.ecommercewebsite.EcommerceWebsite.admin.repository.AdminRepository;
-import com.ecommercewebsite.EcommerceWebsite.repository.UserRepository;
+import com.ecommercewebsite.EcommerceWebsite.model.admin.repository.AdminRepository;
+import com.ecommercewebsite.EcommerceWebsite.model.user.repository.UserRepository;
 
 @Service
 public class OurUserDetailsService implements UserDetailsService {
@@ -19,13 +19,10 @@ public class OurUserDetailsService implements UserDetailsService {
     private AdminRepository adminRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username ) throws UsernameNotFoundException {
-      
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        return ourUserRepo.findByEmail(username)==null ? adminRepository.findByEmail(username) : null;
+        return ourUserRepo.findByEmail(username) == null ? adminRepository.findByEmail(username) : null;
 
+    }
 
-}
-
-   
 }

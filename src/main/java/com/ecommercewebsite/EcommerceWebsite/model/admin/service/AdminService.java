@@ -1,4 +1,4 @@
-package com.ecommercewebsite.EcommerceWebsite.admin.service;
+package com.ecommercewebsite.EcommerceWebsite.model.admin.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,28 +12,34 @@ import org.springframework.web.client.RestTemplate;
 
 import com.ecommercewebsite.EcommerceWebsite.DTO.ChangePasswordDTO;
 import com.ecommercewebsite.EcommerceWebsite.DTO.ReqRes;
-import com.ecommercewebsite.EcommerceWebsite.entity.User;
+import com.ecommercewebsite.EcommerceWebsite.model.admin.entity.Admin;
+import com.ecommercewebsite.EcommerceWebsite.model.admin.repository.AdminRepository;
+import com.ecommercewebsite.EcommerceWebsite.model.user.entity.User;
+import com.ecommercewebsite.EcommerceWebsite.model.user.repository.UserRepository;
+import com.ecommercewebsite.EcommerceWebsite.remote.otp.service.OtpService;
+import com.ecommercewebsite.EcommerceWebsite.repository.OtpRepository;
 import com.ecommercewebsite.EcommerceWebsite.repository.ProductsRepository;
-import com.ecommercewebsite.EcommerceWebsite.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 
 
 @Service
-
+@RequiredArgsConstructor
 public class AdminService {
 
     private final String apiUrl = "https://dummyjson.com/products";
     private final RestTemplate restTemplate;
-    @Autowired
-    private  ProductsRepository productsRepository;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-    @Autowired
-    private UserRepository ourUserRepo;
+  
+    private final  ProductsRepository productsRepository;
+  
+    private final BCryptPasswordEncoder passwordEncoder;
+  
+    private final AdminRepository adminRepository;
+    private final OtpRepository otpRepository;
+    private final OtpService otpService;
 
-    public AdminService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    
 
     // public String loadWebsite() {
     //     try {
@@ -66,13 +72,13 @@ public class AdminService {
     ReqRes response = new ReqRes();
     try {
         
-        User user = ourUserRepo.findByEmail(changePasswordDTO.getEmail());
+        Admin user = adminRepository.findByEmail(changePasswordDTO.getEmail());
 
        
         if (passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), user.getPassword())) {
            
             user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
-            ourUserRepo.save(user);
+            adminRepository.save(user);
 
             response.setStatusCode(200);
             response.setMessage("Password changed successfully.");
@@ -88,5 +94,24 @@ public class AdminService {
     }
     return response;
 }
+
+
+
+    public ReqRes forgotPassword(String email) {
+        otpRepository.deleteAll();
+        ReqRes reqRes=new ReqRes();
+        if(adminRepository.existsByEmail(email))
+        {
+            
+            otpService.sendOtpEmail(email, otpService.generateOtp());
+            reqRes.setStatusCode(200);
+            reqRes.setMessage("Otp Sent to "+email +" for Password Chnage");
+        }
+        return reqRes;
+
+
+        
+        
+    }
 
 }

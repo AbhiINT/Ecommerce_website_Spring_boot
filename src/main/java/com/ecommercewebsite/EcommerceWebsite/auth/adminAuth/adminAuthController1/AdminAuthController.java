@@ -2,21 +2,22 @@ package com.ecommercewebsite.EcommerceWebsite.auth.adminAuth.adminAuthController
 
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ecommercewebsite.EcommerceWebsite.DTO.ChangePasswordDTO;
+
 import com.ecommercewebsite.EcommerceWebsite.DTO.OtpVerificationRequest;
 import com.ecommercewebsite.EcommerceWebsite.DTO.ReqRes;
-import com.ecommercewebsite.EcommerceWebsite.admin.entity.Admin;
-import com.ecommercewebsite.EcommerceWebsite.admin.repository.AdminRepository;
 import com.ecommercewebsite.EcommerceWebsite.auth.adminAuth.adminAuthService.AdminAuthService;
-
-import com.ecommercewebsite.EcommerceWebsite.remote.service.OtpService;
+import com.ecommercewebsite.EcommerceWebsite.auth.dto.LoginRequest;
+import com.ecommercewebsite.EcommerceWebsite.auth.dto.RegistrationRequest;
+import com.ecommercewebsite.EcommerceWebsite.auth.dto.RegistrationResponse;
+import com.ecommercewebsite.EcommerceWebsite.model.admin.entity.Admin;
+import com.ecommercewebsite.EcommerceWebsite.model.admin.repository.AdminRepository;
+import com.ecommercewebsite.EcommerceWebsite.remote.otp.service.OtpService;
 
 import lombok.RequiredArgsConstructor;
 @RestController
@@ -32,20 +33,16 @@ public class AdminAuthController {
 
 
      @PostMapping("/signup")
-    public ResponseEntity<ReqRes> signUp(@RequestBody ReqRes registrationRequest){
+    public ResponseEntity<RegistrationResponse> signUp(@RequestBody RegistrationRequest registrationRequest){
       
         return ResponseEntity.ok(authService.handleSignUpAdmin(registrationRequest));
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<ReqRes> signIn(@RequestBody ReqRes signInRequest){
-
-       
-       
-             return ResponseEntity.ok(authService.signInAdmin(signInRequest));
-     
-            
-        }
+    @PostMapping("/login")
+    public ResponseEntity<ReqRes> signIn(@RequestBody LoginRequest signInRequest){
+        System.out.println(signInRequest.toString());
+        return ResponseEntity.ok(authService.signInAdmin(signInRequest));
+ }
        
     @PostMapping("/refresh")
     public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes refreshTokenRequest){
@@ -64,10 +61,6 @@ public class AdminAuthController {
                
                 if(admin!=null)
                 {
-                    admin.setVerified(true);
-                    adminRepository.save(admin);
-                }
-                else {
                     admin.setVerified(true);
                     adminRepository.save(admin);
                 }
@@ -98,11 +91,6 @@ public class AdminAuthController {
 
   
 
-    @PostMapping("/chnage-password")
-    public ResponseEntity<ReqRes> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
-        ReqRes response = authService.changePassword(changePasswordDTO);
-        return ResponseEntity.ok(response);
-        
-    }
+    
    
 }

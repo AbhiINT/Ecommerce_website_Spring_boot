@@ -27,12 +27,11 @@ public class JWTAuthFIlter extends OncePerRequestFilter {
     @Autowired
     private OurUserDetailsService ourUserDetailsService;
 
-    
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
-        final  String jwtToken;
+        final String jwtToken;
         final String userEmail;
         if (authHeader == null || authHeader.isBlank()) {
             filterChain.doFilter(request, response);
@@ -46,8 +45,7 @@ public class JWTAuthFIlter extends OncePerRequestFilter {
             if (jwtUtils.isTokenValid(jwtToken, userDetails)) {
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
-                );
+                        userDetails, null, userDetails.getAuthorities());
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 securityContext.setAuthentication(token);
                 SecurityContextHolder.setContext(securityContext);
@@ -56,4 +54,3 @@ public class JWTAuthFIlter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-

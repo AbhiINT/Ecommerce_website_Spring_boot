@@ -2,6 +2,8 @@ package com.ecommercewebsite.EcommerceWebsite.auth.adminAuth.adminAuthService;
 
 import java.util.HashMap;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,10 +11,12 @@ import org.springframework.stereotype.Service;
 
 import com.ecommercewebsite.EcommerceWebsite.DTO.ChangePasswordDTO;
 import com.ecommercewebsite.EcommerceWebsite.DTO.ReqRes;
-import com.ecommercewebsite.EcommerceWebsite.admin.entity.Admin;
-import com.ecommercewebsite.EcommerceWebsite.admin.repository.AdminRepository;
-
-import com.ecommercewebsite.EcommerceWebsite.remote.service.OtpService;
+import com.ecommercewebsite.EcommerceWebsite.auth.dto.LoginRequest;
+import com.ecommercewebsite.EcommerceWebsite.auth.dto.RegistrationRequest;
+import com.ecommercewebsite.EcommerceWebsite.auth.dto.RegistrationResponse;
+import com.ecommercewebsite.EcommerceWebsite.model.admin.entity.Admin;
+import com.ecommercewebsite.EcommerceWebsite.model.admin.repository.AdminRepository;
+import com.ecommercewebsite.EcommerceWebsite.remote.otp.service.OtpService;
 import com.ecommercewebsite.EcommerceWebsite.util.JWTUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -25,8 +29,8 @@ public class AdminAuthService {
     private final AdminRepository adminRepository;
     private final AuthenticationManager authenticationManager;
     private final JWTUtils jwtUtils;
-     public ReqRes handleSignUpAdmin(ReqRes registrationRequest) {
-        ReqRes resp=new ReqRes();
+     public RegistrationResponse handleSignUpAdmin(RegistrationRequest registrationRequest) {
+        RegistrationResponse resp=new RegistrationResponse();
         try {
            
          Admin existingAdmin =adminRepository.findByEmail(registrationRequest.getEmail());
@@ -38,16 +42,17 @@ public class AdminAuthService {
                     boolean isOtpResent = otpService.resendOtp(existingAdmin.getEmail());
     
                     if (isOtpResent) {
-                        resp.setStatusCode(200);
+                        resp.setHttp(HttpStatus.CONFLICT);
+                        resp.setEmail(existingAdmin.getEmail());
                         resp.setMessage("Admin exists. Resent OTP for verification. Check your email.");
                     } else {
-                        resp.setStatusCode(500);
-                        resp.setError("Failed to resend OTP. Please try again.");
+                        resp.setHttp(HttpStatus.INTERNAL_SERVER_ERROR);
+                        resp.setMessage("Failed to resend OTP. Please try again.");
                     }
                     return resp;
                 } else {
              
-                    resp.setStatusCode(400); 
+                    resp.setHttp(HttpStatus.FOUND); 
                     resp.setMessage("User with this email already exists.");
                     return resp;
                 }
@@ -57,7 +62,6 @@ public class AdminAuthService {
             Admin ourUsers = new Admin();
             ourUsers.setEmail(registrationRequest.getEmail());
             ourUsers.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-            ourUsers.setRole(registrationRequest.getRole());
             ourUsers.setFirstName(registrationRequest.getFirstName());
             ourUsers.setLastName(registrationRequest.getLastName());
             ourUsers.setPhoneNumber(registrationRequest.getPhoneNumber());
@@ -67,25 +71,25 @@ public class AdminAuthService {
                 boolean isOtpSaved = otpService.saveOtp(registrationRequest.getEmail(), generatedOtp);
     
                 if (isOtpSaved && otpService.sendOtpEmail(registrationRequest.getEmail(), generatedOtp)) {
-                    Admin ourUserResult = adminRepository.save(ourUsers);
-                    resp.setOurAdmin(ourUserResult);
+                    adminRepository.save(ourUsers);
                     resp.setMessage("User Registered Successfully. Check your email for OTP verification.");
-                    resp.setStatusCode(200);
+                    resp.setEmail(registrationRequest.getEmail());
+                    resp.setHttp(HttpStatus.OK);
                 } else {
-                    resp.setStatusCode(500);
-                    resp.setError("Failed to save or send OTP. Please try again.");
+                    resp.setHttp(HttpStatus.INTERNAL_SERVER_ERROR);
+                    resp.setMessage("Failed to save or send OTP. Please try again.");
                 }
             }
         } catch (Exception e) {
-            resp.setStatusCode(500);
-            resp.setError("Internal Server Error. Please try again.");
+            resp.setHttp(HttpStatus.INTERNAL_SERVER_ERROR);
+            resp.setMessage("Internal Server Error. Please try again.");
     
             e.printStackTrace();
         }
         return resp;
     }
 
-     public ReqRes signInAdmin(ReqRes signinRequest)
+     public ReqRes signInAdmin(LoginRequest signinRequest)
     {
         ReqRes response = new ReqRes();
         try {
@@ -96,14 +100,14 @@ public class AdminAuthService {
          
             Admin admin=adminRepository.findByEmail(signinRequest.getEmail());
             
-            var jwt = jwtUtils.generateToken(admin);
-            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), admin);
+            String jwt = jwtUtils.generateToken(admin);
+            String refreshToken = jwtUtils.generateRefreshToken( admin);
 
             
             response.setStatusCode(200);
             response.setToken(jwt);
             response.setRefreshToken(refreshToken);
-            response.setExpirationTime("24Hr");
+            response.setExpirationTime("3 MINUTES");
             response.setMessage("Successfully Signed In");
         } catch (Exception e) {
             
@@ -113,25 +117,7 @@ public class AdminAuthService {
         return response;
     }
 
-    public ReqRes changePassword(ChangePasswordDTO changePasswordDTO)
-    {
-        ReqRes resp=new ReqRes();
-        Admin admin=adminRepository.findByEmail(changePasswordDTO.getEmail());
-
-        if(admin.getPassword().matches(changePasswordDTO.getCurrentPassword()))
-        {
-            admin.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
-            adminRepository.save(admin);
-            resp.setStatusCode(200);
-            resp.setMessage("Password Chnaged Successfully");
-            return resp;
-        }
-        resp.setStatusCode(400);
-        resp.setMessage("Wrong Old Password");
-        return resp;
-
-        
-    }
+    
      public ReqRes refreshToken(ReqRes refreshTokenRequest) {
         ReqRes response = new ReqRes();
         String ourEmail = jwtUtils.extractUsername(refreshTokenRequest.getToken());

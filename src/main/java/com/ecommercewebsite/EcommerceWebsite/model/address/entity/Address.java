@@ -1,4 +1,4 @@
-package com.ecommercewebsite.EcommerceWebsite.entity;
+package com.ecommercewebsite.EcommerceWebsite.model.address.entity;
 
 import java.util.HashSet;
 import java.util.Set;

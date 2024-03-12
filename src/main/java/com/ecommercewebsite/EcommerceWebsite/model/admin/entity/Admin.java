@@ -1,4 +1,4 @@
-package com.ecommercewebsite.EcommerceWebsite.admin.entity;
+package com.ecommercewebsite.EcommerceWebsite.model.admin.entity;
 
 import java.util.Collection;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.ecommercewebsite.EcommerceWebsite.model.roles.Roles.Role;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -54,8 +56,8 @@ public class Admin implements UserDetails  {
     @Size(min = 10, max = 10, message = "Phone Number must be 10 digits")
     private String phoneNumber;
 
-    @NotNull(message = "please provide Valid Role")
-    private String role;
+    
+    private Role role=Role.ADMIN;;
 
     private boolean isVerified = false;
 
@@ -65,7 +67,8 @@ public class Admin implements UserDetails  {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+        String roleString = role.toString();
+        return List.of(new SimpleGrantedAuthority(roleString));
     }
 
     @Override

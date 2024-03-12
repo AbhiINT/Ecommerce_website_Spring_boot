@@ -1,4 +1,4 @@
-package com.ecommercewebsite.EcommerceWebsite.entity;
+package com.ecommercewebsite.EcommerceWebsite.model.user.entity;
 
 import java.util.Collection;
 
@@ -7,6 +7,9 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.ecommercewebsite.EcommerceWebsite.entity.Cart;
+import com.ecommercewebsite.EcommerceWebsite.model.address.entity.Address;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

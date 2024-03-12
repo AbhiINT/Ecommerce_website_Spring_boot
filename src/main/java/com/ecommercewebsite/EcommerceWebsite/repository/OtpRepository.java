@@ -2,7 +2,7 @@ package com.ecommercewebsite.EcommerceWebsite.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.ecommercewebsite.EcommerceWebsite.entity.OtpEntity;
+import com.ecommercewebsite.EcommerceWebsite.remote.otp.entity.OtpEntity;
 
 import java.sql.Timestamp;
 import java.util.Optional;

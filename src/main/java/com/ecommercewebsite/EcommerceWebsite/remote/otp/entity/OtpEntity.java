@@ -1,4 +1,4 @@
-package com.ecommercewebsite.EcommerceWebsite.entity;
+package com.ecommercewebsite.EcommerceWebsite.remote.otp.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

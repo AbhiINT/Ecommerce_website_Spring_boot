@@ -1,4 +1,4 @@
-package com.ecommercewebsite.EcommerceWebsite.remote.service;
+package com.ecommercewebsite.EcommerceWebsite.remote.otp.service;
 
 
 
@@ -7,7 +7,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import com.ecommercewebsite.EcommerceWebsite.entity.OtpEntity;
+import com.ecommercewebsite.EcommerceWebsite.remote.otp.entity.OtpEntity;
 import com.ecommercewebsite.EcommerceWebsite.repository.OtpRepository;
 
 
